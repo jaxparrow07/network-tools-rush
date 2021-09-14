@@ -9,11 +9,6 @@ import com.google.appinventor.components.runtime.util.YailList;
 
 import android.content.Context;
 import android.net.TrafficStats;
-import android.util.Log;
-import android.content.pm.ApplicationInfo;
-import android.app.usage.NetworkStats;
-import android.app.usage.NetworkStats.Bucket;
-import android.net.ConnectivityManager;
 import android.app.Activity;
 
 import java.lang.System;
@@ -35,29 +30,29 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
       this.activity = (Activity) this.context;
     }
 
-    @SimpleProperty(description = "Data type : All")
+    @SimpleProperty(description = "Data type : All ( Wifi, Mobile )")
     public int DataAll(){
       return 0;
     }
 
-    @SimpleProperty(description = "Sets the returned output to bytes or in bits")
+    @SimpleProperty(description = "[Set State] Return in Bits instead of Bytes")
     public void ReturnBits(boolean bool){
       this.SHOW_SPEED_IN_BITS = bool;
     }
 
 
-    @SimpleProperty(description = "Gets the returned output to bytes or in bits")
+    @SimpleProperty(description = "[Set State] Return in Bits instead of Bytes")
     public boolean ReturnBits(){
       return SHOW_SPEED_IN_BITS;
     }
 
-    @SimpleProperty(description = "Sets the returned output of Traffic output to bytes or in bits")
+    @SimpleProperty(description = "[Set State] Human Readable Output - Kb,Mb,Gb")
     public void FormattedTraffic(boolean bool){
       this.FORMATTED_TRAFFIC = bool;
     }
 
 
-    @SimpleProperty(description = "Gets the returned output of Traffic output to bytes or in bits")
+    @SimpleProperty(description = "[Get State] Human Readable Output - Kb,Mb,Gb")
     public boolean FormattedTraffic(){
       return FORMATTED_TRAFFIC;
     }
@@ -114,18 +109,16 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
       } else {
           getpacks = TrafficStats.getTotalRxPackets();
       }
-      
+
       return String.valueOf(getpacks);
 
     }
 
 
-
-    @SimpleFunction(description = "Convert bytes into readable data ( Supports bits too )")
+    @SimpleFunction(description = "Convert bytes into readable data ( Supports bits too, eg. will be converted to Megabits intead of Megabytes.")
     public String FormatBytes(double bytes, boolean useBits) {
       return Utils.parseUsage(bytes,useBits);
     }
- 
 
     @SimpleFunction(description = "Get Uploaded Data in Bytes by type. Set the formatted to get formatted output like Kbps,Mbps. You can also use bits by setting the property.")
     public String GetUploaded(int type, boolean formatted) {
@@ -145,31 +138,25 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
       } else {
         return Utils.parseUsage(getbytes, SHOW_SPEED_IN_BITS);
       }
-
-
     }
 
 
+    // Check the property before calling the event.
     public void TrafChange(String upload,String download, String upload_b,String download_b) {
 
       if (FORMATTED_TRAFFIC) {
-
         TrafficChanged(upload,download);
-
       } else {
-
         TrafficChanged(upload_b,download_b);
       }
-
-
 
     }
 
 
 
-    @SimpleEvent
+    @SimpleEvent(description = "Upload/Download ( Current data traffic/usage )")
     public void TrafficChanged(String upload, String download){
-         EventDispatcher.dispatchEvent(this,"TrafficChanged",upload,download);
+       EventDispatcher.dispatchEvent(this,"TrafficChanged",upload,download);
     }
 
     private ITrafficSpeedListener mStreamSpeedListener = new ITrafficSpeedListener() {
@@ -183,9 +170,7 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
                       String downStreamSpeed = Utils.parseSpeed(downStream,SHOW_SPEED_IN_BITS);
                       double up_b = SHOW_SPEED_IN_BITS ? upStream * 8 : upStream;
                       double down_b = SHOW_SPEED_IN_BITS ? downStream * 8 : downStream;
-                      TrafChange(upStreamSpeed,downStreamSpeed,String.valueOf(up_b),String.valueOf(down_b));
-
-                   
+                      TrafChange(upStreamSpeed,downStreamSpeed,String.valueOf(up_b),String.valueOf(down_b));                   
                 }
             });;
 
@@ -194,7 +179,7 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
     };
   
 
-    @SimpleFunction(description = "Initialize Traffic Measurer ")
+    @SimpleFunction(description = "Initialize Traffic Measurer")
     public void InitializeTrafficMeasure(int type) {
 
         if (type == 1) {
@@ -207,22 +192,18 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
 
     }
 
-    @SimpleFunction(description = "Stops the Traffic Measurer")
+    @SimpleFunction(description = "Stops the Traffic Measurer ( Will throw error if it is not Initialized at the first place.")
     public void StopTrafficMeasure() {
       mTrafficSpeedMeasurer.stopMeasuring();
     }
 
-    @SimpleFunction(description = "Pauses the Traffic Measurer")
+    @SimpleFunction(description = "Pauses the Traffic Measurer ( Useful for activity onPause )")
     public void PauseTrafficMeasure() {
       mTrafficSpeedMeasurer.removeListener();
     }
 
-    @SimpleFunction(description = "Resumes the Traffic Measurer")
+    @SimpleFunction(description = "Resumes the Traffic Measurer ( Useful for activity onResume )")
     public void ResumeTrafficMeasure() {
        mTrafficSpeedMeasurer.registerListener(mStreamSpeedListener);
-    }
-
-
-
-  
+    }  
 }

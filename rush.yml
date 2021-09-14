@@ -1,5 +1,5 @@
 name: NetworkUsage           # Caution: DO NOT change the name.
-description: Extension component for NetworkUsage. Created using Rush.
+description: Extension to work with Network.
 
 # For a detailed info on this file and supported fields, check
 # out this link: https://github.com/ShreyashSaitwal/rush-cli/wiki/Metadata-File

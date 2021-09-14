@@ -1,4 +1,6 @@
 ## NetworkUsage
 ---
 An App Inventor 2 extension created using Rush.
-# network-tools-rush
+<br><br>
+Check releases tab for extension release ( aix )
+<br>Original thread on Kodular Community : https://community.kodular.io/t/free-network-usage-extension-to-get-data-usage/113995/1

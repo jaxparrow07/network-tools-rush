@@ -224,12 +224,13 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
       long down_packets = 0L;
 
       boolean isMobile = (type == 1) ? true : false;
+      boolean isAndroidNew = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q);
 
       TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE); 
       
       NetworkStatsManager networkStatsManager = (NetworkStatsManager) mContext.getSystemService(Context.NETWORK_STATS_SERVICE);
 
-      NetworkStats networkStats = networkStatsManager.queryDetailsForUid( isMobile ? ConnectivityManager.TYPE_MOBILE : ConnectivityManager.TYPE_WIFI , isMobile ? telephonyManager.getSubscriberId() : null , 0, System.currentTimeMillis(), uid);
+      NetworkStats networkStats = networkStatsManager.queryDetailsForUid( isMobile ? ConnectivityManager.TYPE_MOBILE : ConnectivityManager.TYPE_WIFI , isMobile || !isAndroidNew ? telephonyManager.getSubscriberId() : null , 0, System.currentTimeMillis(), uid);
       
       NetworkStats.Bucket bucket = new NetworkStats.Bucket();
 

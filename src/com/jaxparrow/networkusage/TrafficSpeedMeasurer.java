@@ -13,12 +13,12 @@ public class TrafficSpeedMeasurer {
     private ITrafficSpeedListener mTrafficSpeedListener;
     private SamplingHandler mHandler;
 
-    private TrafficType mTrafficType;
+    private int mTrafficType;
     private long mLastTimeReading;
     private long mPreviousUpStream = -1;
     private long mPreviousDownStream = -1;
 
-    public TrafficSpeedMeasurer(TrafficType trafficType) {
+    public TrafficSpeedMeasurer(int trafficType) {
         mTrafficType = trafficType;
         HandlerThread thread = new HandlerThread("ParseThread");
         thread.start();
@@ -44,8 +44,26 @@ public class TrafficSpeedMeasurer {
     }
 
     private void readTrafficStats() {
-        long newBytesUpStream = (mTrafficType == TrafficType.MOBILE ? TrafficStats.getMobileTxBytes() : TrafficStats.getTotalTxBytes()) * 1024;
-        long newBytesDownStream = (mTrafficType == TrafficType.MOBILE ? TrafficStats.getMobileRxBytes() : TrafficStats.getTotalRxBytes()) * 1024;
+
+        long newBytesUpStream;
+        long newBytesDownStream;
+
+        if (mTrafficType == 1) {
+
+            newBytesUpStream = TrafficStats.getMobileTxBytes() * 1024;
+            newBytesDownStream = TrafficStats.getMobileRxBytes() * 1024;
+
+        } else if (mTrafficType == 2) {
+
+            newBytesUpStream = ( TrafficStats.getTotalTxBytes() - TrafficStats.getMobileTxBytes() ) * 1024;
+            newBytesDownStream = ( TrafficStats.getTotalRxBytes() - TrafficStats.getMobileRxBytes() ) * 1024;
+
+        } else {
+
+            newBytesUpStream = TrafficStats.getTotalTxPackets() * 1024;
+            newBytesDownStream = TrafficStats.getTotalRxBytes() * 1024 ;
+
+        }
 
         long byteDiffUpStream = newBytesUpStream - mPreviousUpStream;
         long byteDiffDownStream = newBytesDownStream - mPreviousDownStream;
@@ -109,9 +127,5 @@ public class TrafficSpeedMeasurer {
 
     }
 
-    public enum TrafficType {
-        MOBILE,
-        ALL
-    }
 
 }

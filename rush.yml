@@ -6,7 +6,7 @@ description: Extension to work with Network.
 
 version:
   number: auto        # Auto increments version number when built with '-r' (or '--release') flag.
-  name: 1.5
+  name: 1.6
 
 assets:
   icon: icon.png      # Extension icon

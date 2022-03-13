@@ -98,7 +98,7 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
 
       long val = SHOW_SPEED_IN_BITS ? getbytes * 8 : getbytes;
 
-      return formatted ? Utils.parseUsage( (double) val, SHOW_SPEED_IN_BITS ) : String.valueOf(val);
+      return formatted ? Utils.parseUsage( (double) getbytes, SHOW_SPEED_IN_BITS ) : String.valueOf(val);
 
     }
     @SimpleFunction(description = "Get Downloaded Data in Bytes by type.You can also get bits by setting the property.")
@@ -122,7 +122,7 @@ public class NetworkUsage extends AndroidNonvisibleComponent {
 
       long val = SHOW_SPEED_IN_BITS ? getbytes * 8 : getbytes;
 
-      return formatted ? Utils.parseUsage( (double) val , SHOW_SPEED_IN_BITS ) : String.valueOf(val);
+      return formatted ? Utils.parseUsage( (double) getbytes , SHOW_SPEED_IN_BITS ) : String.valueOf(val);
 
     }
 
